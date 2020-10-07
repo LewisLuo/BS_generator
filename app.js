@@ -4,6 +4,7 @@ const port = 3000
 const handlebars = require('handlebars')
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
+const randomNumber = require('./utils/random_number.js')
 
 const people = {
   'engineer': {
@@ -28,28 +29,25 @@ const people = {
 
 const phrase = ['很簡單', '很容易', '很快', '很正常']
 
-let result = ''
-
-
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
-app.use(bodyParser.urlencoded({ entended: true }))
+app.use(bodyParser.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => {
-  result = '請選擇你想惹怒的對象！'
-  res.render('index', { people, result })
+  let text = '請選擇你想惹怒的對象！'
+  res.render('index', { people, text })
 })
 
 app.post('/', (req, res) => {
   const target = req.body.target
+  let text = ''
 
   if (target) {
-    result = `身為一個${people[target].name}，${people[target].task[randomIndex(4)]}，${phrase[randomIndex(4)]}吧！`
-    console.log(target)
-    res.render('index', { people, target, result })
+    text = `身為一個${people[target].name}，${people[target].task[randomNumber(4)]}，${phrase[randomNumber(4)]}吧！`
+    res.render('index', { people, target, text })
   } else {
-    result = '尚未選擇對象，請重新選取！'
-    res.render('index', { people, target, result })
+    text = '尚未選擇對象，請重新選取！'
+    res.render('index', { people, target, text })
   }
 })
 
@@ -62,7 +60,3 @@ handlebars.registerHelper('checkRadio', function (a, b) {
     return 'checked'
   }
 })
-
-function randomIndex(number) {
-  return Math.floor(Math.random() * number)
-}
